@@ -38,20 +38,31 @@
     NSMutableAttributedString *attributeStr = [[NSMutableAttributedString alloc] initWithString:localizedFormatString];
     NSDictionary *timeAttrs = @{ NSForegroundColorAttributeName : [UIColor redColor],
                                  NSFontAttributeName : [UIFont systemFontOfSize:40.0f]};
-    /** 方案2 **/
-    NSError *error = nil;
-    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:@"[0-9]+" options:NSRegularExpressionCaseInsensitive error:&error];
-    if (error == nil) {
-        NSArray *matches = [reg matchesInString:localizedFormatString options:NSMatchingReportCompletion range:NSMakeRange(0, localizedFormatString.length)];
-        for (NSTextCheckingResult *match in matches) {
-            for (NSUInteger i = 0; i < match.numberOfRanges; i++) {
-                NSRange range = [match rangeAtIndex:i];
-                if (range.location != NSNotFound) {
-                    [attributeStr addAttributes:timeAttrs range:range];
-                }
-            }
-        }
+    /** 方案1 **/
+    NSRange minRange, secRange;
+    if (@available(iOS 9.0, *)) {
+        minRange = [localizedFormatString localizedStandardRangeOfString:minStr];
+        secRange = [localizedFormatString localizedStandardRangeOfString:secStr];
+    } else {
+        minRange = [localizedFormatString rangeOfString:minStr];
+        secRange = [localizedFormatString rangeOfString:secStr];
     }
+    [attributeStr addAttributes:timeAttrs range:minRange];
+    [attributeStr addAttributes:timeAttrs range:secRange];
+//    /** 方案2 **/
+//    NSError *error = nil;
+//    NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:@"[0-9]+" options:NSRegularExpressionCaseInsensitive error:&error];
+//    if (error == nil) {
+//        NSArray *matches = [reg matchesInString:localizedFormatString options:NSMatchingReportCompletion range:NSMakeRange(0, localizedFormatString.length)];
+//        for (NSTextCheckingResult *match in matches) {
+//            for (NSUInteger i = 0; i < match.numberOfRanges; i++) {
+//                NSRange range = [match rangeAtIndex:i];
+//                if (range.location != NSNotFound) {
+//                    [attributeStr addAttributes:timeAttrs range:range];
+//                }
+//            }
+//        }
+//    }
     return [[NSAttributedString alloc] initWithAttributedString:attributeStr];;
 }
 
