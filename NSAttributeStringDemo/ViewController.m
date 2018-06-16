@@ -18,7 +18,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
  
-    NSAttributedString *resultTime = [self formattedCurrentTime:133];
+    NSAttributedString *resultTime = [self formattedCurrentTime:0];
     self.label.attributedText = resultTime;
 }
 
